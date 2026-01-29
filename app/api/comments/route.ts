@@ -30,16 +30,73 @@ export async function POST(req: Request) {
 
     await requireProjectAccess(file.projectId, "EDITOR")
 
+    // Extract @mentions from content
+    const mentionRegex = /@(\w+(?:\s+\w+)*)/g
+    const mentionedNames = []
+    let match
+
+    while ((match = mentionRegex.exec(validated.content)) !== null) {
+      mentionedNames.push(match[1])
+    }
+
+    // Find mentioned users
+    const mentionedUsers = await db.user.findMany({
+      where: {
+        OR: mentionedNames.map(name => ({
+          OR: [
+            { name: { contains: name, mode: 'insensitive' } },
+            { email: { equals: name } }
+          ]
+        })),
+        memberships: {
+          some: {
+            projectId: file.projectId
+          }
+        }
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true
+      }
+    })
+
+    // Create comment with mentions
     const comment = await db.comment.create({
       data: {
         ...validated,
-        authorId: session.user.id
+        authorId: session.user.id,
+        mentions: {
+          create: mentionedUsers.map(user => ({
+            userId: user.id
+          }))
+        }
       },
       include: {
         author: true,
-        mentions: true
+        mentions: {
+          include: { user: true }
+        }
       }
     })
+
+    // Create notifications for mentioned users
+    for (const mentionedUser of mentionedUsers) {
+      // Don't notify if user mentioned themselves
+      if (mentionedUser.id === session.user.id) continue
+
+      await db.notification.create({
+        data: {
+          userId: mentionedUser.id,
+          type: 'COMMENT_MENTION',
+          commentId: comment.id,
+          fileId: validated.fileId,
+          projectId: file.projectId,
+          message: `${session.user.name || session.user.email} mentioned you in a comment`,
+          read: false
+        }
+      })
+    }
 
     // Log activity
     await db.activityLog.create({

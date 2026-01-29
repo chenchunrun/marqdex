@@ -14,30 +14,30 @@ export async function GET(req: Request) {
     }
 
     const { searchParams } = new URL(req.url)
-    const unreadOnly = searchParams.get('unreadOnly') === 'true'
+    const projectId = searchParams.get('projectId')
+    const fileId = searchParams.get('fileId')
     const limit = parseInt(searchParams.get('limit') || '50')
 
-    const notifications = await db.notification.findMany({
-      where: {
-        userId: session.user.id,
-        ...(unreadOnly && { isRead: false })
-      },
+    // Build where clause
+    const where: any = {}
+
+    if (projectId) {
+      where.projectId = projectId
+    }
+
+    if (fileId) {
+      where.fileId = fileId
+    }
+
+    // Get activities
+    const activities = await db.activityLog.findMany({
+      where,
       include: {
-        comment: {
-          include: {
-            author: {
-              select: {
-                id: true,
-                name: true,
-                email: true
-              }
-            },
-            file: {
-              select: {
-                id: true,
-                name: true
-              }
-            }
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true
           }
         },
         file: {
@@ -53,15 +53,24 @@ export async function GET(req: Request) {
           }
         }
       },
-      orderBy: { createdAt: 'desc' },
+      orderBy: {
+        createdAt: 'desc'
+      },
       take: limit
     })
 
-    return NextResponse.json(notifications)
+    // Get count
+    const count = await db.activityLog.count({ where })
+
+    return NextResponse.json({
+      activities,
+      count,
+      hasMore: activities.length === limit
+    })
   } catch (error) {
-    console.error("Notifications fetch error:", error)
+    console.error("Activity log fetch error:", error)
     return NextResponse.json(
-      { error: "Failed to fetch notifications" },
+      { error: "Failed to fetch activity log" },
       { status: 500 }
     )
   }
