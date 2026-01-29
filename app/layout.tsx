@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Markdown Collaborative Work System",
+  title: "MarqDexorative Work System",
   description: "Intelligent collaborative Markdown editing system with AI integration",
 };
 

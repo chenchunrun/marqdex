@@ -2,6 +2,8 @@
 
 A modern platform for teams to collaborate on documents in real-time, enhanced by intelligent AI assistance and professional templates.
 
+**Original Author**: [chenchunrun](https://github.com/chenchunrun)
+
 ## 🎯 Project Status: Production Ready ✅
 
 ### ✅ Completed Features

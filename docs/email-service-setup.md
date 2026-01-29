@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Markdown Collaborative Work System includes a comprehensive email notification service that sends emails for important events such as:
+The MarqDexorative Work System includes a comprehensive email notification service that sends emails for important events such as:
 - Team invitations
 - Project invitations
 - @mentions in comments
@@ -38,10 +38,10 @@ SMTP_PORT=587
 SMTP_SECURE=false
 SMTP_USER=your-email@gmail.com
 SMTP_PASS=your-app-password
-SMTP_FROM="Markdown Collab <your-email@gmail.com>"
+SMTP_FROM="MarqDex <your-email@gmail.com>"
 
 # App Configuration
-APP_NAME=Markdown Collab
+APP_NAME=MarqDex
 APP_URL=http://localhost:3002
 ```
 

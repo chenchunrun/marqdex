@@ -105,7 +105,7 @@ SMTP_PORT=587
 SMTP_SECURE=false
 SMTP_USER=your-email@gmail.com
 SMTP_PASS=your-app-password
-SMTP_FROM="Markdown Collab <your-email@gmail.com>"
+SMTP_FROM="MarqDex <your-email@gmail.com>"
 ```
 
 ### 生产环境配置
@@ -123,7 +123,7 @@ SMTP_PORT=587
 SMTP_SECURE=false
 SMTP_USER=apikey
 SMTP_PASS=YOUR_SENDGRID_API_KEY
-SMTP_FROM="Markdown Collab <noreply@yourdomain.com>"
+SMTP_FROM="MarqDex <noreply@yourdomain.com>"
 ```
 
 ## 邮件模板

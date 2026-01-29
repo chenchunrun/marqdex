@@ -12,7 +12,7 @@ import {
   type ProjectUpdateData,
 } from './templates'
 
-const APP_NAME = process.env.APP_NAME || 'Markdown Collab'
+const APP_NAME = process.env.APP_NAME || 'MarqDex'
 const APP_URL = process.env.NEXTAUTH_URL || process.env.APP_URL || 'http://localhost:3002'
 
 /**

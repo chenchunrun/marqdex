@@ -1,4 +1,4 @@
-# Markdown Collaborative Work System - System Architecture
+# MarqDexorative Work System - System Architecture
 
 ## High-Level System Architecture
 

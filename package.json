@@ -1,7 +1,9 @@
 {
-  "name": "markdown-collab",
-  "version": "0.1.0",
+  "name": "marqdex",
+  "version": "1.0.0",
   "private": true,
+  "author": "chenchunrun <https://github.com/chenchunrun>",
+  "description": "AI-Powered Collaborative Workspace for real-time document editing",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

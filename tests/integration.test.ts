@@ -1,5 +1,5 @@
 /**
- * Comprehensive Test Suite for Markdown Collaborative Work System
+ * Comprehensive Test Suite for MarqDexorative Work System
  *
  * This file contains integration tests for all major features.
  * Run with: npm test

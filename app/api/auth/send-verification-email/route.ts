@@ -77,7 +77,7 @@ export async function POST(req: Request) {
     await sendEmail({
       to: user.email,
       subject: "Verify Your Email Address",
-      html: baseTemplate(content, "Markdown Collab", appUrl)
+      html: baseTemplate(content, "MarqDex", appUrl)
     })
 
     return NextResponse.json({ success: true, message: "Verification email sent" })

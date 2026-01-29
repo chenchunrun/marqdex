@@ -1,6 +1,6 @@
-# Markdown Collaborative Work System - Architecture Documentation
+# MarqDexorative Work System - Architecture Documentation
 
-This directory contains comprehensive architecture documentation for the Markdown Collaborative Work System.
+This directory contains comprehensive architecture documentation for the MarqDexorative Work System.
 
 ## 📋 Table of Contents
 

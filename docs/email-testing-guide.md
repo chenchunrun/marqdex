@@ -66,7 +66,7 @@ SMTP_PORT="587"
 SMTP_SECURE="false"
 SMTP_USER="your-email@gmail.com"
 SMTP_PASS="xxxx xxxx xxxx xxxx"  # 16位应用密码
-SMTP_FROM="Markdown Collab <your-email@gmail.com>"
+SMTP_FROM="MarqDex <your-email@gmail.com>"
 ```
 
 **步骤3**: 重启开发服务器
@@ -92,7 +92,7 @@ SMTP_PORT="465"
 SMTP_SECURE="true"
 SMTP_USER="your-email@163.com"
 SMTP_PASS="your-auth-code"  # 授权码，不是登录密码
-SMTP_FROM="Markdown Collab <your-email@163.com>"
+SMTP_FROM="MarqDex <your-email@163.com>"
 ```
 
 #### QQ邮箱
@@ -102,7 +102,7 @@ SMTP_PORT="587"
 SMTP_SECURE="false"
 SMTP_USER="your-email@qq.com"
 SMTP_PASS="your-auth-code"  # 授权码
-SMTP_FROM="Markdown Collab <your-email@qq.com>"
+SMTP_FROM="MarqDex <your-email@qq.com>"
 ```
 
 **获取授权码**:

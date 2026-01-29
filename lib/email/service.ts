@@ -44,7 +44,7 @@ export async function sendEmail({ to, subject, html, text }: EmailOptions): Prom
     }
 
     const info = await transporter.sendMail({
-      from: process.env.SMTP_FROM || `"Markdown Collab" <${process.env.SMTP_USER}>`,
+      from: process.env.SMTP_FROM || `"MarqDex" <${process.env.SMTP_USER}>`,
       to,
       subject,
       html,

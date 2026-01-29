@@ -1,5 +1,5 @@
 /**
- * Unit Tests for Markdown Collaborative Work System
+ * Unit Tests for MarqDexorative Work System
  *
  * Tests core utilities, validation, and business logic
  * Run with: npm test
