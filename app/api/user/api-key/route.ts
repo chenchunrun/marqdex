@@ -1,23 +1,8 @@
 import { requireAuth } from "@/lib/auth/rbac"
 import { db } from "@/lib/db"
 import { validateApiKey } from "@/lib/ai/client"
+import { encrypt, decrypt } from "@/lib/utils/encryption"
 import { NextResponse } from "next/server"
-
-// Simple encryption/decryption (for production, use proper encryption)
-const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY || "default-key-32-characters-long!"
-
-function encrypt(text: string): string {
-  // Simple base64 encoding (use proper encryption in production)
-  return Buffer.from(text).toString('base64')
-}
-
-function decrypt(text: string): string {
-  try {
-    return Buffer.from(text, 'base64').toString()
-  } catch {
-    return ""
-  }
-}
 
 export async function POST(req: Request) {
   try {
@@ -31,14 +16,6 @@ export async function POST(req: Request) {
       )
     }
 
-    console.log('Saving AI config:', {
-      hasApiKey: !!apiKey,
-      keyLength: apiKey.length,
-      keyPrefix: apiKey.substring(0, 10),
-      aiModel,
-      aiEndpoint
-    })
-
     // Encrypt and store
     const encryptedKey = encrypt(apiKey)
 
@@ -51,8 +28,6 @@ export async function POST(req: Request) {
           "updatedAt" = NOW()
       WHERE id = $4
     `, encryptedKey, aiModel || 'gpt-3.5-turbo', aiEndpoint || null, session.user!.id)
-
-    console.log('AI config saved successfully')
 
     return NextResponse.json({ success: true })
   } catch (error) {

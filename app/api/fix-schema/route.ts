@@ -14,7 +14,6 @@ export async function GET() {
 
     // If columns don't exist, add them
     if (!result || result.length === 0) {
-      console.log('Adding aiModel and aiApiEndpoint columns...')
       await db.$executeRawUnsafe(`
         ALTER TABLE "User"
         ADD COLUMN IF NOT EXISTS "aiApiEndpoint" TEXT,

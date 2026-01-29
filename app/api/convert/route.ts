@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { requireAuth } from "@/lib/auth/rbac"
 import { db } from "@/lib/db"
 import { generateContent } from "@/lib/ai/client"
+import { decrypt } from "@/lib/utils/encryption"
 import mammoth from 'mammoth'
 
 // Mammoth types (inline since no @types package exists)
@@ -15,6 +16,9 @@ interface MammothResult<T> {
   messages: Array<{ type: string; message: string }>
 }
 
+// File size limit: 10MB
+const MAX_FILE_SIZE = 10 * 1024 * 1024
+
 export async function POST(req: Request) {
   try {
     const formData = await req.formData()
@@ -26,6 +30,18 @@ export async function POST(req: Request) {
       return NextResponse.json(
         { error: "No file provided" },
         { status: 400 }
+      )
+    }
+
+    // Validate file size
+    if (file.size > MAX_FILE_SIZE) {
+      return NextResponse.json(
+        {
+          error: `File size exceeds maximum allowed size of ${MAX_FILE_SIZE / 1024 / 1024}MB`,
+          maxSize: MAX_FILE_SIZE,
+          actualSize: file.size
+        },
+        { status: 413 }
       )
     }
 
@@ -165,12 +181,11 @@ async function convertWithAI(text: string): Promise<string> {
 
     if (!user.openaiApiKey) {
       // If no API key configured, fall back to rule-based conversion
-      console.log("No API key configured, using rule-based conversion")
       return convertToMarkdown(text)
     }
 
     // Decrypt API key
-    const decryptedKey = Buffer.from(user.openaiApiKey, 'base64').toString()
+    const decryptedKey = decrypt(user.openaiApiKey)
 
     // Use AI to convert to well-formatted Markdown
     const prompt = `Convert the following text to well-formatted Markdown. Follow these guidelines:

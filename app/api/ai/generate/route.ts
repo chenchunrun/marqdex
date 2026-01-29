@@ -2,6 +2,7 @@ import { requireAuth } from "@/lib/auth/rbac"
 import { db } from "@/lib/db"
 import { generateContent } from "@/lib/ai/client"
 import { TEMPLATE_PROMPTS } from "@/lib/ai/prompts"
+import { decrypt } from "@/lib/utils/encryption"
 import { NextResponse } from "next/server"
 import { TemplateCategory } from "@prisma/client"
 
@@ -44,7 +45,7 @@ export async function POST(req: Request) {
     }
 
     // Decrypt API key
-    const decryptedKey = Buffer.from(user.openaiApiKey, 'base64').toString()
+    const decryptedKey = decrypt(user.openaiApiKey)
 
     // Generate prompt based on template type or action
     let prompt = ""

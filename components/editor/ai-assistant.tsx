@@ -6,7 +6,6 @@ import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
 import remarkBreaks from "remark-breaks"
 import rehypeHighlight from "rehype-highlight"
-import rehypeRaw from "rehype-raw"
 import "highlight.js/styles/github-dark.css"
 
 interface AIAssistantProps {
@@ -269,7 +268,7 @@ export function AIAssistant({ fileId, projectId, fileName, projectName, currentC
                         <div className="bg-white border border-gray-200 rounded-lg p-4 min-h-full prose prose-sm max-w-none">
                           <ReactMarkdown
                             remarkPlugins={[remarkGfm, remarkBreaks]}
-                            rehypePlugins={[rehypeHighlight, rehypeRaw]}
+                            rehypePlugins={[rehypeHighlight]}
                           >
                             {currentContent || "*No content*"}
                           </ReactMarkdown>

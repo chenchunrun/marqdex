@@ -1,6 +1,6 @@
 import { auth } from "@/lib/auth/config"
 import { db } from "@/lib/db"
-import { exportToMarkdown, exportToPDF } from "@/lib/utils/export"
+import { exportToMarkdown, exportToHTML } from "@/lib/utils/export"
 import { NextResponse } from "next/server"
 
 export async function GET(
@@ -53,31 +53,32 @@ export async function GET(
 
       return new NextResponse(content, {
         headers: {
-          'Content-Type': 'text/markdown',
+          'Content-Type': 'text/markdown; charset=utf-8',
           'Content-Disposition': `attachment; filename="${filename}"`
         }
       })
-    } else if (format === 'pdf' || format === 'html') {
-      const { filename, content } = await exportToPDF(id)
+    } else if (format === 'html') {
+      const { filename, content } = await exportToHTML(id)
 
       return new NextResponse(content, {
         headers: {
-          'Content-Type': 'text/markdown',
+          'Content-Type': 'text/html; charset=utf-8',
           'Content-Disposition': `attachment; filename="${filename}"`
         }
       })
     } else if (format === 'pdf') {
-      const { filename, content } = await exportToPDF(id)
+      // For PDF export, return HTML with instructions to print/save as PDF
+      const { filename, content } = await exportToHTML(id, true)
 
       return new NextResponse(content, {
         headers: {
-          'Content-Type': 'text/html',
-          'Content-Disposition': `attachment; filename="${filename}"`
+          'Content-Type': 'text/html; charset=utf-8',
+          'Content-Disposition': `inline; filename="${filename}"`
         }
       })
     } else {
       return NextResponse.json(
-        { error: "Invalid format. Use 'md' or 'html'" },
+        { error: "Invalid format. Use 'md', 'html', or 'pdf'" },
         { status: 400 }
       )
     }

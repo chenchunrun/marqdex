@@ -26,6 +26,8 @@ const ACCEPTED_FILE_TYPES = [
   ".docx"
 ]
 
+const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB
+
 const FILE_TYPE_DESCRIPTIONS = {
   ".md": "Markdown File",
   ".markdown": "Markdown File",
@@ -52,6 +54,12 @@ export function FileImporter({ userId, projects }: FileImporterProps) {
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
+
+    // Check file size
+    if (file.size > MAX_FILE_SIZE) {
+      alert(`File size exceeds maximum allowed size of ${MAX_FILE_SIZE / 1024 / 1024}MB. Please select a smaller file.`)
+      return
+    }
 
     // Check file type
     const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase()

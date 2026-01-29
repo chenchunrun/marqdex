@@ -47,13 +47,6 @@ export function ApiKeySettings() {
     setMessage("")
 
     try {
-      console.log('Sending config:', {
-        hasApiKey: !!apiKey,
-        apiKeyLength: apiKey.length,
-        aiModel,
-        aiEndpoint
-      })
-
       const response = await fetch("/api/user/api-key", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -65,7 +58,6 @@ export function ApiKeySettings() {
       })
 
       const data = await response.json()
-      console.log('Response:', data)
 
       if (!response.ok) {
         const errorMsg = data.details

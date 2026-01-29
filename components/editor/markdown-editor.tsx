@@ -6,7 +6,6 @@ import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
 import remarkBreaks from "remark-breaks"
 import rehypeHighlight from "rehype-highlight"
-import rehypeRaw from "rehype-raw"
 import "highlight.js/styles/github-dark.css"
 import { AIAssistant } from "@/components/editor/ai-assistant"
 
@@ -289,7 +288,7 @@ export function MarkdownEditor({ fileId, projectId, fileName, initialContent, pr
             <div className="flex-1 p-8 prose prose-sm max-w-none prose-headings:font-bold prose-headings:text-black prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl prose-p:text-black prose-strong:text-black prose-em:text-gray-900 prose-code:text-rose-700 prose-code:bg-rose-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-pre:bg-stone-900 prose-pre:text-stone-100 prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline prose-blockquote:border-l-4 prose-blockquote:border-gray-500 prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:text-gray-900 prose-table:border-collapse prose-table:border-gray-400 prose-th:bg-stone-200 prose-th:font-bold prose-th:text-black prose-td:border prose-td:border-gray-400 prose-td:p-2 prose-td:text-black prose-hr:border-gray-400 prose-li:text-black">
               <ReactMarkdown
                 remarkPlugins={[remarkGfm, remarkBreaks]}
-                rehypePlugins={[rehypeHighlight, rehypeRaw]}
+                rehypePlugins={[rehypeHighlight]}
               >
                 {content}
               </ReactMarkdown>
