@@ -5,6 +5,36 @@ import { DashboardLayout } from "@/components/dashboard/dashboard-layout"
 import { FileDeleteButton } from "@/components/files/file-delete-button"
 import Link from "next/link"
 
+// Helper function to format file size
+function formatFileSize(bytes: number): string {
+  if (bytes === 0) return '0 B'
+  const k = 1024
+  const sizes = ['B', 'KB', 'MB', 'GB']
+  const i = Math.floor(Math.log(bytes) / Math.log(k))
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
+}
+
+// Helper function to format date with time
+function formatDateTime(date: Date): string {
+  const now = new Date()
+  const fileDate = new Date(date)
+
+  // If today, show time only
+  if (fileDate.toDateString() === now.toDateString()) {
+    return `Today ${fileDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false })}`
+  }
+
+  // If yesterday, show "Yesterday"
+  const yesterday = new Date(now)
+  yesterday.setDate(yesterday.getDate() - 1)
+  if (fileDate.toDateString() === yesterday.toDateString()) {
+    return `Yesterday ${fileDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false })}`
+  }
+
+  // Otherwise show full date and time
+  return `${fileDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} ${fileDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false })}`
+}
+
 export default async function FilesPage() {
   const session = await auth()
 
@@ -75,6 +105,9 @@ export default async function FilesPage() {
                       Creator
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Size
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Versions
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -107,13 +140,28 @@ export default async function FilesPage() {
                         {file.creator.name || file.creator.email}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {file._count.versions}
+                        {formatFileSize(file.content.length)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {file._count.comments}
+                        <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                          file._count.versions > 0
+                            ? 'bg-blue-100 text-blue-800'
+                            : 'bg-gray-100 text-gray-600'
+                        }`}>
+                          {file._count.versions} version{file._count.versions !== 1 ? 's' : ''}
+                        </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {new Date(file.updatedAt).toLocaleDateString()}
+                        <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                          file._count.comments > 0
+                            ? 'bg-purple-100 text-purple-800'
+                            : 'bg-gray-100 text-gray-600'
+                        }`}>
+                          {file._count.comments} comment{file._count.comments !== 1 ? 's' : ''}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {formatDateTime(file.updatedAt)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <div className="flex gap-3">
