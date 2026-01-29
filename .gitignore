@@ -41,3 +41,26 @@ yarn-error.log*
 next-env.d.ts
 
 /app/generated/prisma
+
+# email configuration script (contains sensitive SMTP setup)
+setup-email.sh
+
+# temporary files
+*.tmp
+*.temp
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# database backups
+*.sql
+*.db
+*.sqlite

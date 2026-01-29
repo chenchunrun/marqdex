@@ -23,6 +23,19 @@ export function NotificationCenter({ currentUserId }: NotificationCenterProps) {
   const [unreadCount, setUnreadCount] = useState(0)
   const [loading, setLoading] = useState(false)
 
+  // Fetch unread count
+  const fetchUnreadCount = async () => {
+    try {
+      const response = await fetch('/api/notifications/unread-count')
+      if (response.ok) {
+        const data = await response.json()
+        setUnreadCount(data.count)
+      }
+    } catch (error) {
+      console.error('Failed to fetch unread count:', error)
+    }
+  }
+
   // Fetch notifications
   const fetchNotifications = async () => {
     setLoading(true)
@@ -31,6 +44,7 @@ export function NotificationCenter({ currentUserId }: NotificationCenterProps) {
       if (response.ok) {
         const data = await response.json()
         setNotifications(data)
+        // Also update unread count
         setUnreadCount(data.filter((n: Notification) => !n.isRead).length)
       }
     } catch (error) {
@@ -77,10 +91,20 @@ export function NotificationCenter({ currentUserId }: NotificationCenterProps) {
 
   // Initial fetch and refresh every 30 seconds
   useEffect(() => {
+    // Initial fetch
+    fetchUnreadCount()
     fetchNotifications()
-    const interval = setInterval(fetchNotifications, 30000)
+
+    // Refresh both unread count and notifications periodically
+    const interval = setInterval(() => {
+      fetchUnreadCount()
+      if (isOpen) {
+        fetchNotifications()
+      }
+    }, 30000)
+
     return () => clearInterval(interval)
-  }, [])
+  }, [isOpen])
 
   return (
     <div className="relative">

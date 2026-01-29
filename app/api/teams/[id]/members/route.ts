@@ -1,6 +1,7 @@
 import { requireAuth } from "@/lib/auth/rbac"
 import { db } from "@/lib/db"
 import { NextResponse } from "next/server"
+import { sendTeamInvitationEmail } from "@/lib/email/send-notification"
 
 // Get all members of a team
 export async function GET(
@@ -137,6 +138,51 @@ export async function POST(
         }
       }
     })
+
+    // Notify the new member
+    await db.notification.create({
+      data: {
+        userId: userId,
+        type: 'TEAM_INVITATION',
+        title: '🎉 Added to Team',
+        content: `${session.user.name || session.user.email} added you to this team`,
+        link: `/teams/${teamId}`
+      }
+    })
+
+    // Send email to the new member
+    await sendTeamInvitationEmail(
+      membership.user.email,
+      session.user.name || session.user.email || 'Administrator',
+      session.user.email || '',
+      team.name,
+      teamId
+    )
+
+    // Notify existing members about new member
+    const existingMembers = await db.teamMember.findMany({
+      where: {
+        teamId,
+        userId: { not: userId } // Don't notify the new member
+      },
+      select: {
+        user: {
+          select: { id: true }
+        }
+      }
+    })
+
+    for (const member of existingMembers) {
+      await db.notification.create({
+        data: {
+          userId: member.user.id,
+          type: 'TEAM_INVITATION',
+          title: '👥 New Team Member',
+          content: `${membership.user.name || membership.user.email} was added to the team`,
+          link: `/teams/${teamId}`
+        }
+      })
+    }
 
     return NextResponse.json(membership)
   } catch (error) {

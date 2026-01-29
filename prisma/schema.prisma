@@ -262,6 +262,11 @@ model Comment {
   lineStart   Int?
   lineEnd     Int?
 
+  // For comment threading (replies)
+  parentId    String?
+  parent      Comment? @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies     Comment[] @relation("CommentReplies")
+
   isResolved  Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -276,6 +281,7 @@ model Comment {
 
   @@index([fileId])
   @@index([authorId])
+  @@index([parentId])
   @@index([createdAt])
 }
 
@@ -353,6 +359,7 @@ enum ActionType {
   MEMBER_ADDED
   MEMBER_REMOVED
   PROJECT_CREATED
+  PROJECT_UPDATED
   PROJECT_ARCHIVED
 }
 

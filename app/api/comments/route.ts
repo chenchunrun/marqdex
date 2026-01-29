@@ -2,6 +2,7 @@ import { requireAuth, requireProjectAccess } from "@/lib/auth/rbac"
 import { db } from "@/lib/db"
 import { commentCreateSchema } from "@/lib/utils/validation"
 import { NextResponse } from "next/server"
+import { sendMentionEmail } from "@/lib/email/send-notification"
 
 export async function POST(req: Request) {
   try {
@@ -18,7 +19,10 @@ export async function POST(req: Request) {
 
     // Verify file access
     const file = await db.file.findUnique({
-      where: { id: validated.fileId }
+      where: { id: validated.fileId },
+      include: {
+        project: true
+      }
     })
 
     if (!file) {
@@ -61,6 +65,20 @@ export async function POST(req: Request) {
       }
     })
 
+    // If parentId is provided, verify parent comment exists
+    if (validated.parentId) {
+      const parentComment = await db.comment.findUnique({
+        where: { id: validated.parentId }
+      })
+
+      if (!parentComment) {
+        return NextResponse.json(
+          { error: "Parent comment not found" },
+          { status: 404 }
+        )
+      }
+    }
+
     // Create comment with mentions
     const comment = await db.comment.create({
       data: {
@@ -94,6 +112,17 @@ export async function POST(req: Request) {
           link: `/editor/${validated.fileId}`
         }
       })
+
+      // Send email notification
+      await sendMentionEmail(
+        mentionedUser.email,
+        session.user.name || session.user.email || 'Someone',
+        session.user.email || '',
+        file.name,
+        file.project.name,
+        validated.content,
+        file.id
+      )
     }
 
     // Log activity

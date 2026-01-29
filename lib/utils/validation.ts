@@ -48,7 +48,8 @@ export const commentCreateSchema = z.object({
   fileId: z.string().min(1, "File ID is required"),
   content: z.string().min(1, "Comment content is required"),
   lineStart: z.number().optional(),
-  lineEnd: z.number().optional()
+  lineEnd: z.number().optional(),
+  parentId: z.string().optional()
 })
 
 export type LoginInput = z.infer<typeof loginSchema>

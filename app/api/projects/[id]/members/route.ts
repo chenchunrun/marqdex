@@ -1,6 +1,7 @@
 import { requireAuth } from "@/lib/auth/rbac"
 import { db } from "@/lib/db"
 import { NextResponse } from "next/server"
+import { sendProjectInvitationEmail } from "@/lib/email/send-notification"
 
 // Get all members of a project
 export async function GET(
@@ -91,7 +92,8 @@ export async function POST(
     const project = await db.project.findUnique({
       where: { id: projectId },
       include: {
-        members: true
+        members: true,
+        team: true
       }
     })
 
@@ -147,6 +149,52 @@ export async function POST(
         metadata: { addedUser: membership.user.name || membership.user.email }
       }
     })
+
+    // Notify the new member
+    await db.notification.create({
+      data: {
+        userId: userId,
+        type: 'TEAM_INVITATION',
+        title: '🎉 Added to Project',
+        content: `${session.user.name || session.user.email} added you to this project`,
+        link: `/projects/${projectId}`
+      }
+    })
+
+    // Send email to the new member
+    await sendProjectInvitationEmail(
+      membership.user.email,
+      session.user.name || session.user.email || 'Administrator',
+      session.user.email || '',
+      project.name,
+      project.team.name,
+      projectId
+    )
+
+    // Notify existing members about new member
+    const existingMembers = await db.projectMember.findMany({
+      where: {
+        projectId,
+        userId: { not: userId } // Don't notify the new member
+      },
+      select: {
+        user: {
+          select: { id: true }
+        }
+      }
+    })
+
+    for (const member of existingMembers) {
+      await db.notification.create({
+        data: {
+          userId: member.user.id,
+          type: 'TEAM_INVITATION',
+          title: '👥 New Project Member',
+          content: `${membership.user.name || membership.user.email} was added to the project`,
+          link: `/projects/${projectId}`
+        }
+      })
+    }
 
     return NextResponse.json(membership)
   } catch (error) {

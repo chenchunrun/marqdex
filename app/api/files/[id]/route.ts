@@ -2,6 +2,7 @@ import { requireAuth, requireProjectAccess } from "@/lib/auth/rbac"
 import { db } from "@/lib/db"
 import { NextResponse } from "next/server"
 import { FileStatus } from "@prisma/client"
+import { sendFileUpdateEmail } from "@/lib/email/send-notification"
 
 export async function PATCH(
   req: Request,
@@ -53,6 +54,47 @@ export async function PATCH(
         action: "FILE_UPDATED"
       }
     })
+
+    // Create notifications for other project members
+    const projectMembers = await db.projectMember.findMany({
+      where: {
+        projectId: file.projectId,
+        userId: { not: session.user.id } // Don't notify the updater
+      },
+      include: {
+        user: {
+          select: { id: true, email: true, name: true }
+        }
+      }
+    })
+
+    // Get project name for email
+    const project = await db.project.findUnique({
+      where: { id: file.projectId },
+      select: { name: true }
+    })
+
+    for (const member of projectMembers) {
+      await db.notification.create({
+        data: {
+          userId: member.user.id,
+          type: 'FILE_CHANGED',
+          title: '📄 File Updated',
+          content: `${session.user.name || session.user.email} updated "${name || file.name}"`,
+          link: `/editor/${file.id}`
+        }
+      })
+
+      // Send email notification
+      await sendFileUpdateEmail(
+        member.user.email,
+        session.user.name || session.user.email || 'Someone',
+        session.user.email || '',
+        name || file.name,
+        project?.name || 'Unknown Project',
+        file.id
+      )
+    }
 
     return NextResponse.json(updatedFile)
   } catch (error) {

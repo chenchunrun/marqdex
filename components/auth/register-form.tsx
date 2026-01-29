@@ -37,7 +37,31 @@ export function RegisterForm() {
       if (!response.ok) {
         setError(data.error || "Registration failed")
       } else {
-        router.push("/login?registered=true")
+        // Auto-login after registration
+        try {
+          const loginResponse = await fetch("/api/auth/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email: validated.email,
+              password: validated.password
+            })
+          })
+
+          if (loginResponse.ok) {
+            // Send verification email
+            await fetch("/api/auth/send-verification-email", {
+              method: "POST"
+            })
+
+            // Redirect to dashboard
+            router.push("/dashboard?verifyEmail=true")
+          } else {
+            router.push("/login?registered=true")
+          }
+        } catch {
+          router.push("/login?registered=true")
+        }
       }
     } catch (err) {
       setError("Registration failed. Please try again.")
