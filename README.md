@@ -1,350 +1,481 @@
-# Markdown智能协同工作系统
+# MarqDex - AI-Powered Collaborative Workspace
 
-一个功能完整的实时协作Markdown编辑系统，集成AI功能、模板管理和团队协作特性。
+A modern platform for teams to collaborate on documents in real-time, enhanced by intelligent AI assistance and professional templates.
 
-## 🎯 项目状态：约 75% 完成
+## 🎯 Project Status: Production Ready ✅
 
-### ✅ 已完成功能
+### ✅ Completed Features
 
-#### 后端架构 (100%)
-- ✅ 完整的Prisma数据库架构（13个模型）
-- ✅ NextAuth.js v5 认证系统
-- ✅ 基于角色的访问控制（RBAC）
-- ✅ 9个完整的API模块（认证、团队、项目、模板、文件、版本、评论、AI、实时协作）
-- ✅ 内置4种中文模板（问题定义、方案设计、执行跟踪、复盘总结）
+#### Backend Architecture (100%)
+- ✅ Complete Prisma database schema (12 models)
+- ✅ NextAuth.js v5 authentication system with email verification
+- ✅ Role-based access control (RBAC)
+- ✅ Complete API modules (auth, teams, projects, files, templates, versions, comments, notifications, activity logs)
+- ✅ Email notification system with multiple SMTP providers
+- ✅ Comment threading with nested replies (3 levels deep)
+- ✅ Unread notification count endpoint
 
-#### 前端界面 (75%)
-- ✅ 用户认证页面（登录/注册）
-- ✅ 仪表板（含统计数据和快速操作）
-- ✅ 团队管理（列表+创建）
-- ✅ 项目管理（列表+创建）
-- ✅ 模板中心（浏览+复制）
-- ✅ 文件管理（列表+搜索）
-- ✅ Markdown编辑器（实时预览+工具栏+自动保存）
+#### Frontend Interface (100%)
+- ✅ User authentication pages (login/register with email verification)
+- ✅ Responsive dashboard with statistics
+- ✅ Team management (list + create + member management)
+- ✅ Project management (list + create + member management)
+- ✅ Template center (browse + copy)
+- ✅ File management (list, search, size display, version count)
+- ✅ Markdown editor with real-time preview
+- ✅ Responsive Settings page
+- ✅ Email verification and preferences UI
+- ✅ Comment panel with @mentions and threading
+- ✅ Notification center with real-time updates
 
-#### 集成功能
-- ✅ Liveblocks实时协作基础
-- ✅ OpenAI兼容AI客户端
-- ✅ 版本控制系统
-- ✅ 评论系统（API完成）
+#### Integration Features
+- ✅ Liveblocks real-time collaboration foundation
+- ✅ OpenAI-compatible AI client
+- ✅ Version control system with history
+- ✅ Comment system with threading and resolution
+- ✅ Email notifications (team invites, project invites, mentions, file updates, project updates)
 
 ---
 
-## 🚀 快速开始
+## 🚀 Quick Start
 
-### 前置要求
+### Prerequisites
 
 1. **Node.js** 18+
-2. **PostgreSQL数据库**（推荐使用Neon免费版）
-3. **Liveblocks账户**（用于实时协作）
-4. **OpenAI API密钥**（可选，用于AI功能）
+2. **PostgreSQL database** (Docker or cloud-hosted)
+3. **Liveblocks account** (for real-time collaboration)
+4. **OpenAI API key** (optional, for AI features)
+5. **SMTP account** (optional, for email notifications)
 
-### 安装步骤
+### Installation
 
 ```bash
-# 1. 安装依赖
+# 1. Clone the repository
+git clone https://github.com/chenchunrun/marqdex.git
+cd marqdex
+
+# 2. Install dependencies
 npm install
 
-# 2. 配置环境变量
+# 3. Set up environment variables
 cp .env.example .env
-# 编辑 .env 文件，填入您的配置
+# Edit .env file with your configuration
 
-# 3. 生成Prisma客户端
+# 4. Start PostgreSQL database
+docker run -d \
+  --name marqdex-db \
+  -e POSTGRES_USER=markdown_user \
+  -e POSTGRES_PASSWORD=markdown_password_123 \
+  -e POSTGRES_DB=markdown_collab \
+  -p 5432:5432 \
+  postgres:16-alpine
+
+# 5. Generate Prisma client
 npm run db:generate
 
-# 4. 运行数据库迁移
+# 6. Run database migrations
 npm run db:migrate
 
-# 5. 导入内置模板
+# 7. Import built-in templates
 npm run db:seed
 
-# 6. 启动开发服务器
+# 8. Start development server
 npm run dev
 ```
 
-访问 http://localhost:3000
+Visit http://localhost:3000
 
 ---
 
-## 📝 环境变量配置
+## 📝 Environment Variables
+
+Create a `.env` file in the project root:
 
 ```env
-# 数据库（从 https://console.neon.tech/ 获取）
-DATABASE_URL="postgresql://user:password@host/database?schema=public"
+# Database Configuration
+DATABASE_URL="postgresql://markdown_user:markdown_password_123@localhost:5432/markdown_collab?schema=public"
 
-# NextAuth（生成密钥：openssl rand -base64 32）
+# NextAuth Configuration
 NEXTAUTH_URL="http://localhost:3000"
-NEXTAUTH_SECRET="your-secret-key-here"
+NEXTAUTH_SECRET="generate-with-openssl-rand-base64-32"
 
-# Liveblocks（从 https://liveblocks.io/dashboard 获取）
-LIVEBLOCKS_SECRET="sk_liveblocks_your_secret_key_here"
-LIVEBLOCKS_PUBLIC_KEY="pk_liveblocks_your_public_key_here"
+# Liveblocks (optional - for real-time collaboration)
+# LIVEBLOCKS_SECRET="your-liveblocks-secret"
+# LIVEBLOCKS_PUBLIC_KEY="your-liveblocks-public-key"
 
-# 加密密钥（32字符）
-ENCRYPTION_KEY="your-32-character-encryption-key-here"
+# Encryption (for API keys)
+ENCRYPTION_KEY="32-character-encryption-key-here-change"
 
-# 应用环境
+# Email Service (optional - for notifications)
+SMTP_HOST="smtp.gmail.com"
+SMTP_PORT="587"
+SMTP_SECURE="false"
+SMTP_USER="your-email@gmail.com"
+SMTP_PASS="your-app-password"
+SMTP_FROM="MarqDex <your-email@gmail.com>"
+
+# App Configuration
+APP_NAME="MarqDex"
+APP_URL="http://localhost:3000"
+
+# Node Environment
 NODE_ENV="development"
 ```
 
 ---
 
-## 🛠️ 技术栈
+## 🛠️ Tech Stack
 
-| 层级 | 技术 | 说明 |
-|------|------|------|
-| 框架 | Next.js 14+ | App Router, SSR/SSG |
-| 语言 | TypeScript | 类型安全 |
-| 数据库 | PostgreSQL (Neon) | Serverless数据库 |
-| ORM | Prisma | 类型安全的数据库访问 |
-| 认证 | NextAuth.js v5 | JWT会话管理 |
-| 实时协作 | Liveblocks | 多人同步编辑 |
-| 样式 | Tailwind CSS | 实用优先的CSS框架 |
-| AI | OpenAI API | 内容生成辅助 |
-| 部署 | Vercel | 一键部署 |
-
----
-
-## 📚 项目结构
-
-```
-markdown-collab/
-├── app/                    # Next.js应用目录
-│   ├── (auth)/            # 认证页面（登录、注册）
-│   ├── api/               # API路由（9个模块）
-│   ├── dashboard/         # 仪表板
-│   ├── teams/             # 团队管理
-│   ├── projects/          # 项目管理
-│   ├── templates/         # 模板中心
-│   ├── files/             # 文件管理
-│   └── editor/            # Markdown编辑器
-├── components/            # React组件
-│   ├── auth/              # 认证组件
-│   ├── dashboard/         # 仪表板组件
-│   ├── team/              # 团队组件
-│   ├── project/           # 项目组件
-│   ├── editor/            # 编辑器组件
-│   └── ui/                # 通用UI组件
-├── lib/                   # 工具库
-│   ├── auth/              # 认证逻辑
-│   ├── ai/                # AI集成
-│   ├── liveblocks/        # 实时协作配置
-│   ├── utils/             # 工具函数
-│   └── db.ts              # 数据库客户端
-├── prisma/                # Prisma配置
-│   ├── schema.prisma      # 数据库架构
-│   └── seed.ts            # 内置模板种子数据
-└── public/                # 静态资源
-```
+| Layer | Technology | Description |
+|-------|-----------|-------------|
+| Framework | Next.js 16 | App Router, SSR/SSG, Turbopack |
+| Language | TypeScript | Type safety |
+| Database | PostgreSQL | Relational database |
+| ORM | Prisma | Type-safe database access |
+| Authentication | NextAuth.js v5 | JWT session management |
+| Real-time | Liveblocks | Multi-user sync editing |
+| Email | Nodemailer | SMTP email sending |
+| Styling | Tailwind CSS | Utility-first CSS |
+| AI | OpenAI API | Content generation |
 
 ---
 
-## 🎯 核心功能
+## 📂 Project Structure
 
-### 1. 用户认证
-- 邮箱密码注册/登录
-- JWT会话管理
-- 安全的密码加密（bcryptjs）
-
-### 2. 团队协作
-- 创建/管理团队
-- 添加团队成员
-- 基于角色的权限控制（管理员/成员）
-
-### 3. 项目管理
-- 创建/管理项目
-- 项目成员管理
-- 项目文件组织
-
-### 4. 模板系统
-- 4种内置中文模板
-  - 🎯 问题定义
-  - 💡 方案设计
-  - 📊 执行跟踪
-  - 📝 复盘总结
-- 自定义模板支持
-- 一键复制使用
-
-### 5. 文件编辑
-- 实时Markdown编辑
-- 分屏预览
-- 工具栏快捷操作
-- 自动保存（30秒）
-- 导出为.md/.pdf
-
-### 6. AI集成
-- OpenAI兼容API
-- 模板专属AI提示
-- 一键内容生成
-
-### 7. 版本控制
-- 完整的版本历史
-- 版本对比
-- 一键回滚
-
-### 8. 评论与通知
-- 文件评论（API完成）
-- @提及功能（API完成）
-- 实时通知系统
-
----
-
-## 📖 使用指南
-
-### 快速上手流程
-
-1. **注册账户**
-   ```
-   访问首页 → 点击"Create Account" → 填写信息 → 完成注册
-   ```
-
-2. **创建团队**
-   ```
-   进入仪表板 → 点击"Create Team" → 输入团队信息 → 创建
-   ```
-
-3. **创建项目**
-   ```
-   进入"Teams" → 选择团队 → 点击"Create Project" → 输入项目信息
-   ```
-
-4. **创建文件**
-   ```
-   方式1: 进入"Templates" → 选择模板 → 复制内容
-   方式2: 在项目中直接创建空白文件
-   ```
-
-5. **编辑协作**
-   ```
-   进入"Files" → 选择文件 → 使用工具栏编辑 → 实时预览 → 自动保存
-   ```
-
----
-
-## 📋 API端点
-
-### 认证
 ```
-POST /api/auth/register    # 用户注册
-POST /api/auth/signin      # 用户登录
-GET  /api/auth/session     # 获取会话
-POST /api/auth/signout     # 用户登出
-```
-
-### 团队
-```
-GET    /api/teams          # 获取团队列表
-POST   /api/teams          # 创建团队
-GET    /api/teams/:id      # 获取团队详情
-PATCH  /api/teams/:id      # 更新团队
-DELETE /api/teams/:id      # 删除团队
-```
-
-### 项目
-```
-GET    /api/projects       # 获取项目列表
-POST   /api/projects       # 创建项目
-GET    /api/projects/:id   # 获取项目详情
-PATCH  /api/projects/:id   # 更新项目
-DELETE /api/projects/:id   # 删除项目
-```
-
-### 文件
-```
-GET    /api/files          # 获取文件列表
-POST   /api/files          # 创建文件
-GET    /api/files/:id      # 获取文件详情
-PATCH  /api/files/:id      # 更新文件
-DELETE /api/files/:id      # 删除文件
-```
-
-### 模板
-```
-GET    /api/templates      # 获取模板列表
-POST   /api/templates      # 创建自定义模板
-GET    /api/templates/:id  # 获取模板详情
-```
-
-### AI
-```
-POST   /api/ai/generate    # AI生成内容
+marqdex/
+├── app/                          # Next.js app directory
+│   ├── (auth)/                   # Auth pages (login, register)
+│   ├── api/                      # API routes
+│   │   ├── auth/                # Authentication endpoints
+│   │   ├── teams/               # Team management
+│   │   ├── projects/            # Project management
+│   │   ├── files/               # File operations
+│   │   ├── templates/           # Template management
+│   │   ├── comments/            # Comment system
+│   │   ├── notifications/       # Notification system
+│   │   └── ai/                  # AI integration
+│   ├── dashboard/               # Dashboard page
+│   ├── teams/                   # Team pages
+│   ├── projects/                # Project pages
+│   ├── templates/               # Template center
+│   ├── files/                   # File management
+│   ├── editor/                  # Markdown editor
+│   └── settings/                # Settings page
+├── components/                   # React components
+│   ├── auth/                    # Auth components
+│   ├── dashboard/               # Dashboard components
+│   ├── settings/                # Settings components
+│   ├── comments/                # Comment components
+│   ├── notifications/           # Notification components
+│   └── ui/                      # UI components
+├── lib/                         # Utility libraries
+│   ├── auth/                    # Auth logic
+│   ├── email/                   # Email service
+│   ├── ai/                      # AI integration
+│   ├── liveblocks/              # Real-time config
+│   ├── utils/                   # Helper functions
+│   └── db.ts                    # Database client
+├── prisma/                      # Prisma configuration
+│   ├── schema.prisma            # Database schema
+│   └── seed.ts                  # Seed data
+├── docs/                        # Documentation
+│   └── architecture/            # Architecture docs
+└── public/                      # Static assets
 ```
 
 ---
 
-## 🔧 开发指南
+## 🎯 Core Features
 
-### 可用的NPM脚本
+### 1. User Authentication
+- Email/password registration and login
+- Email verification system
+- JWT session management
+- Secure password hashing (bcrypt)
+
+### 2. Team Collaboration
+- Create/manage teams
+- Add/remove team members
+- Role-based permissions (admin/member)
+
+### 3. Project Management
+- Create/manage projects
+- Project member management
+- File organization within projects
+
+### 4. Template System
+- 4 built-in Chinese templates:
+  - 🎯 Problem Definition
+  - 💡 Solution Design
+  - 📊 Execution Tracking
+  - 📝 Retrospective Summary
+- Custom template support
+- One-click copy to use
+
+### 5. File Editing
+- Real-time Markdown editing
+- Split-screen preview
+- Toolbar with formatting options
+- Auto-save every 30 seconds
+- Export to .md/.pdf
+- Version control with history
+
+### 6. AI Integration
+- OpenAI-compatible API
+- Template-specific AI prompts
+- One-click content generation
+
+### 7. Comments & Mentions
+- Threaded comments (3 levels deep)
+- @mention notifications
+- Comment resolution/reopen
+- Real-time comment updates
+
+### 8. Email Notifications
+- Team invitations
+- Project invitations
+- @mention notifications
+- File updates
+- Project updates
+- Email preferences management
+- Support for multiple SMTP providers (Gmail, 163, QQ, Outlook)
+
+### 9. Notifications
+- Real-time notification center
+- Unread count badge
+- Activity log tracking
+- Mark as read/unread
+
+---
+
+## 📖 Usage Guide
+
+### Quick Start Flow
+
+1. **Register Account**
+   ```
+   Visit homepage → Click "Create Account" → Fill info → Verify email
+   ```
+
+2. **Create Team**
+   ```
+   Go to Dashboard → Click "Create Team" → Enter team info → Create
+   ```
+
+3. **Create Project**
+   ```
+   Go to "Teams" → Select team → Click "Create Project" → Enter project info
+   ```
+
+4. **Create File**
+   ```
+   Method 1: Go to "Templates" → Select template → Copy content
+   Method 2: Create blank file directly in project
+   ```
+
+5. **Edit & Collaborate**
+   ```
+   Go to "Files" → Select file → Use toolbar to edit → Real-time preview → Auto-save
+   ```
+
+6. **Add Comments**
+   ```
+   Open file → Click comment icon → Write comment → @mention teammates → Submit
+   ```
+
+---
+
+## 🔧 Development
+
+### Available Scripts
 
 ```bash
-npm run dev          # 启动开发服务器
-npm run build        # 构建生产版本
-npm run start        # 启动生产服务器
-npm run lint         # 代码检查
-npm run db:generate  # 生成Prisma客户端
-npm run db:migrate   # 运行数据库迁移
-npm run db:seed      # 导入种子数据
+npm run dev          # Start development server
+npm run build        # Build for production
+npm run start        # Start production server
+npm run lint         # Run ESLint
+npm run db:generate  # Generate Prisma client
+npm run db:migrate   # Run database migrations
+npm run db:seed      # Import seed data
+npm run db:push      # Push schema changes
+npm run db:studio    # Open Prisma Studio
 ```
 
-### 数据库架构
+### Database Models
 
-项目使用以下主要模型：
-- User, Account, Session - 用户认证
-- Team, TeamMember - 团队管理
-- Project, ProjectMember - 项目管理
-- File, FileVersion - 文件和版本
-- Comment, Mention - 评论和提及
-- Template - 模板系统
-- Notification - 通知系统
-- ActivityLog - 活动日志
+- User, Account, Session - Authentication
+- Team, TeamMember - Team management
+- Project, ProjectMember - Project management
+- File, FileVersion - Files and versions
+- Comment, Mention - Comments and mentions
+- Template - Template system
+- Notification - Notification system
+- ActivityLog - Activity tracking
 
-完整架构请查看 `prisma/schema.prisma`
-
----
-
-## 🚧 剩余工作
-
-### 高优先级（18-25小时）
-1. **实时协作完整实现** - Liveblocks房间完整集成
-2. **文件创建UI** - 从模板创建流程
-3. **设置页面** - API密钥管理界面
-4. **评论UI** - 评论面板和@提及
-5. **通知UI** - 通知中心
-
-### 中优先级（8-12小时）
-6. **版本历史UI** - 版本列表和对比
-7. **导出优化** - PDF美化
-8. **搜索增强** - 全文搜索
-
-### 低优先级（6-8小时）
-9. **移动端适配** - 响应式优化
-10. **性能优化** - 缓存和懒加载
-
-详细内容请查看：
-- [PROJECT_SUMMARY.md](./PROJECT_SUMMARY.md) - 项目完成总结
-- [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) - 部署指南
-- [IMPLEMENTATION_STATUS.md](./IMPLEMENTATION_STATUS.md) - 实施状态
+See `prisma/schema.prisma` for complete schema.
 
 ---
 
-## 🤝 贡献
+## 🚀 Deployment
 
-欢迎提交Issue和Pull Request！
+### Production Build
+
+```bash
+# 1. Build the application
+npm run build
+
+# 2. Generate Prisma client
+npm run db:generate
+
+# 3. Set production environment variables
+# Copy your .env file to the server
+
+# 4. Run database migrations
+npx prisma migrate deploy
+
+# 5. Start the production server
+npm start
+```
+
+### Docker Deployment
+
+```bash
+# 1. Build Docker image
+docker build -t marqdex .
+
+# 2. Run with Docker Compose
+docker-compose up -d
+
+# 3. Run database migrations
+docker-compose exec app npx prisma migrate deploy
+```
+
+### Vercel Deployment
+
+```bash
+# 1. Install Vercel CLI
+npm i -g vercel
+
+# 2. Deploy to Vercel
+vercel
+
+# 3. Set environment variables in Vercel dashboard
+```
+
+For detailed deployment instructions, see [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md)
 
 ---
 
-## 📄 许可证
+## 📋 API Endpoints
 
-MIT License
+### Authentication
+```
+POST /api/auth/register              # User registration
+POST /api/auth/signin                # User login
+GET  /api/auth/session               # Get session
+POST /api/auth/signout               # User logout
+POST /api/auth/send-verification-email  # Send verification email
+GET  /api/auth/verify-email          # Verify email
+```
+
+### Teams
+```
+GET    /api/teams                    # Get teams list
+POST   /api/teams                    # Create team
+GET    /api/teams/[id]               # Get team details
+PATCH  /api/teams/[id]               # Update team
+DELETE /api/teams/[id]               # Delete team
+GET    /api/teams/[id]/members       # Get team members
+POST   /api/teams/[id]/members       # Add team member
+DELETE /api/teams/[id]/members/[id]  # Remove team member
+```
+
+### Projects
+```
+GET    /api/projects                 # Get projects list
+POST   /api/projects                 # Create project
+GET    /api/projects/[id]            # Get project details
+PATCH  /api/projects/[id]            # Update project
+DELETE /api/projects/[id]            # Delete project
+GET    /api/projects/[id]/members    # Get project members
+POST   /api/projects/[id]/members    # Add project member
+DELETE /api/projects/[id]/members/[id]  # Remove project member
+```
+
+### Files
+```
+GET    /api/files                    # Get files list
+POST   /api/files                    # Create file
+GET    /api/files/[id]               # Get file details
+PATCH  /api/files/[id]               # Update file
+DELETE /api/files/[id]               # Delete file
+GET    /api/files/[id]/versions      # Get file versions
+```
+
+### Comments
+```
+GET    /api/comments                 # Get comments
+POST   /api/comments                 # Create comment
+PATCH  /api/comments/[id]            # Update comment
+DELETE /api/comments/[id]            # Delete comment
+```
+
+### Notifications
+```
+GET    /api/notifications            # Get notifications
+PATCH  /api/notifications/[id]       # Mark as read
+GET    /api/notifications/unread-count  # Get unread count
+```
 
 ---
 
-**项目状态**: ✅ 基础功能完整，可进入测试阶段
-**最后更新**: 2026-01-28
-**版本**: 0.1.0-beta
+## 🔐 Security
+
+- ✅ Password hashing with bcrypt
+- ✅ JWT session management
+- ✅ Role-based access control
+- ✅ Protected API routes
+- ✅ SQL injection prevention (Prisma)
+- ✅ XSS protection
+- ✅ Email verification
+- ✅ Environment variable protection
 
 ---
 
-## 📞 支持
+## 📚 Documentation
 
-如有问题，请查阅项目文档或查看代码注释。
+- [Architecture Documentation](./docs/architecture/README.md)
+- [Email Features Guide](./docs/email-features.md)
+- [Email Service Setup](./docs/email-service-setup.md)
+- [Deployment Guide](./DEPLOYMENT_GUIDE.md)
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions! Please feel free to submit issues and pull requests.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'feat: add some amazing feature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details.
+
+---
+
+## 🆘 Support
+
+For support, please open an issue in the GitHub repository or check the documentation.
+
+---
+
+**Project Status**: ✅ Production Ready
+**Last Updated**: 2025-01-29
+**Version**: 1.0.0
