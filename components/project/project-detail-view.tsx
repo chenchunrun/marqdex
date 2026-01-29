@@ -1,6 +1,7 @@
 "use client"
 
 import { ProjectMembers } from "./project-members"
+import { ActivityLog } from "@/components/activity/activity-log"
 import Link from "next/link"
 import { useState } from "react"
 
@@ -85,7 +86,7 @@ export function ProjectDetailView({ project }: ProjectDetailViewProps) {
       </div>
 
       {/* Recent Files */}
-      <div>
+      <div className="mb-8">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-semibold text-gray-900">Recent Files</h2>
           <Link
@@ -132,6 +133,11 @@ export function ProjectDetailView({ project }: ProjectDetailViewProps) {
             </div>
           </div>
         )}
+      </div>
+
+      {/* Activity Log */}
+      <div>
+        <ActivityLog projectId={project.id} limit={10} />
       </div>
     </div>
   )

@@ -3,6 +3,7 @@ import { redirect } from "next/navigation"
 import { db } from "@/lib/db"
 import { DashboardLayout } from "@/components/dashboard/dashboard-layout"
 import { MarkdownEditor } from "@/components/editor/markdown-editor"
+import { CommentsPanel } from "@/components/comments/comments-panel"
 
 export default async function EditorPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -64,15 +65,26 @@ export default async function EditorPage({ params }: { params: Promise<{ id: str
           </div>
         </div>
 
-        {/* Editor */}
-        <div className="flex-1 overflow-hidden">
-          <MarkdownEditor
-            fileId={file.id}
-            projectId={file.projectId}
-            fileName={file.name}
-            initialContent={file.content}
-            projectName={file.project.name}
-          />
+        {/* Editor with Comments */}
+        <div className="flex-1 flex overflow-hidden">
+          <div className="flex-1 overflow-hidden">
+            <MarkdownEditor
+              fileId={file.id}
+              projectId={file.projectId}
+              fileName={file.name}
+              initialContent={file.content}
+              projectName={file.project.name}
+            />
+          </div>
+
+          {/* Comments Panel - Right Sidebar */}
+          <div className="w-96 border-l border-gray-200 bg-white overflow-y-auto">
+            <CommentsPanel
+              fileId={file.id}
+              projectId={file.projectId}
+              currentUserId={session.user.id}
+            />
+          </div>
         </div>
       </div>
     </DashboardLayout>
