@@ -4,6 +4,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { signOut } from "next-auth/react"
 import { useState, useEffect } from "react"
+import { NotificationCenter } from "@/components/notifications/notification-center"
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: "🏠" },
@@ -63,6 +64,22 @@ export function Sidebar() {
 
       {/* User Info */}
       <div className="border-t border-gray-800 p-4">
+        {/* Notification Center */}
+        <div className="mb-4">
+          {user && (
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-sm font-medium text-gray-400">Notifications</span>
+            </div>
+          )}
+          <div className="flex justify-center">
+            {user ? (
+              <NotificationCenter currentUserId={user.email || ''} />
+            ) : (
+              <div className="w-10 h-10 rounded-full bg-gray-700 animate-pulse"></div>
+            )}
+          </div>
+        </div>
+
         {user && (
           <div className="mb-4 flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-semibold">
