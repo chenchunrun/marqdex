@@ -1,65 +1,122 @@
-import Image from "next/image";
+import Link from "next/link"
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100">
+      <div className="max-w-6xl mx-auto text-center px-4 py-16">
+        {/* Logo */}
+        <div className="mb-12 flex justify-center">
+          <div className="w-40 h-40 bg-white rounded-2xl shadow-lg flex items-center justify-center p-6 border border-gray-200">
+            <img
+              src="/logo.jpg"
+              alt="MarqDex Logo"
+              className="w-full h-full object-contain"
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+          </div>
         </div>
-      </main>
+
+        {/* Title */}
+        <h1 className="text-7xl font-bold text-slate-900 mb-6 tracking-tight">
+          MarqDex
+        </h1>
+        <p className="text-2xl text-slate-600 mb-8 font-light tracking-wide">
+          AI-Powered Collaborative Workspace
+        </p>
+        <p className="text-lg text-slate-500 mb-20 max-w-3xl mx-auto leading-relaxed">
+          A modern platform for teams to collaborate on documents in real-time,
+          enhanced by intelligent AI assistance and professional templates
+        </p>
+
+        {/* Feature Cards */}
+        <div className="grid md:grid-cols-3 gap-8 mb-16">
+          <div className="bg-white p-10 rounded-2xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-300">
+            <div className="w-14 h-14 bg-slate-100 rounded-xl flex items-center justify-center mx-auto mb-6">
+              <span className="text-3xl">📝</span>
+            </div>
+            <h3 className="text-xl font-semibold mb-3 text-slate-900">Smart Templates</h3>
+            <p className="text-slate-600 leading-relaxed">
+              Professional templates for problem definition, solution design,
+              execution tracking, and project retrospectives
+            </p>
+          </div>
+
+          <div className="bg-white p-10 rounded-2xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-300">
+            <div className="w-14 h-14 bg-slate-100 rounded-xl flex items-center justify-center mx-auto mb-6">
+              <span className="text-3xl">👥</span>
+            </div>
+            <h3 className="text-xl font-semibold mb-3 text-slate-900">Real-time Collaboration</h3>
+            <p className="text-slate-600 leading-relaxed">
+              Work together seamlessly with your team featuring live editing,
+              presence indicators, and instant synchronization
+            </p>
+          </div>
+
+          <div className="bg-white p-10 rounded-2xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-300">
+            <div className="w-14 h-14 bg-slate-100 rounded-xl flex items-center justify-center mx-auto mb-6">
+              <span className="text-3xl">🤖</span>
+            </div>
+            <h3 className="text-xl font-semibold mb-3 text-slate-900">AI Integration</h3>
+            <p className="text-slate-600 leading-relaxed">
+              Generate, optimize, and transform content with AI-powered tools
+              compatible with OpenAI and other leading AI services
+            </p>
+          </div>
+        </div>
+
+        {/* Additional Features */}
+        <div className="grid md:grid-cols-2 gap-8 mb-16">
+          <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-300">
+            <div className="flex items-start gap-5">
+              <div className="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                <span className="text-2xl">📁</span>
+              </div>
+              <div className="text-left">
+                <h3 className="text-lg font-semibold text-slate-900 mb-2">File Import & Conversion</h3>
+                <p className="text-slate-600 text-sm leading-relaxed">
+                  Seamlessly import documents in multiple formats including Word and Markdown.
+                  AI-enhanced conversion ensures perfect formatting every time.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-300">
+            <div className="flex items-start gap-5">
+              <div className="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                <span className="text-2xl">📊</span>
+              </div>
+              <div className="text-left">
+                <h3 className="text-lg font-semibold text-slate-900 mb-2">Team & Project Management</h3>
+                <p className="text-slate-600 text-sm leading-relaxed">
+                  Organize work across multiple teams and projects with granular
+                  access control and comprehensive collaboration features.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* CTA Buttons */}
+        <div className="flex gap-4 justify-center">
+          <Link
+            href="/login"
+            className="px-12 py-4 bg-slate-900 text-white rounded-xl font-semibold hover:bg-slate-800 transition-colors duration-200 shadow-sm"
+          >
+            Sign In
+          </Link>
+          <Link
+            href="/register"
+            className="px-12 py-4 bg-white text-slate-900 border border-slate-300 rounded-xl font-semibold hover:bg-slate-50 hover:border-slate-400 transition-all duration-200"
+          >
+            Create Account
+          </Link>
+        </div>
+
+        {/* Footer */}
+        <div className="mt-20 text-slate-400 text-sm">
+          <p>Designed for Modern Teams • Powered by AI</p>
+        </div>
+      </div>
     </div>
-  );
+  )
 }

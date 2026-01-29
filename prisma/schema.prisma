@@ -1,0 +1,390 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============ Authentication & Users ============
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  emailVerified Boolean   @default(false)
+  name          String?
+  nickname      String?
+  avatar        String?
+  password      String?
+  emailEnabled  Boolean   @default(true)
+
+  // API Keys (encrypted at application level)
+  openaiApiKey  String?
+  aiModel       String?  @default("gpt-3.5-turbo")
+  aiApiEndpoint String?  // Custom API endpoint for compatible services (e.g., zhipu AI)
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  lastLoginAt   DateTime?
+
+  // Relations
+  accounts         Account[]
+  sessions         Session[]
+  teamMemberships  TeamMember[]
+  projectMemberships ProjectMember[]
+  createdTeams     Team[]    @relation("TeamCreator")
+  createdProjects  Project[] @relation("ProjectCreator")
+  createdFiles     File[]    @relation("FileCreator")
+  fileVersions     FileVersion[]
+  comments         Comment[]
+  notifications    Notification[]
+  mentions         Mention[]
+  activities       ActivityLog[]
+  createdTemplates Template[]  @relation("TemplateCreator")
+
+  @@index([email])
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ============ Team Management ============
+
+model Team {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  avatar      String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  creatorId   String
+  creator     User     @relation("TeamCreator", fields: [creatorId], references: [id], onDelete: Cascade)
+
+  // Relations
+  members     TeamMember[]
+  projects    Project[]
+
+  @@index([creatorId])
+}
+
+model TeamMember {
+  id        String   @id @default(cuid())
+  teamId    String
+  userId    String
+  role      TeamRole @default(MEMBER)
+  joinedAt  DateTime @default(now())
+
+  team      Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([teamId, userId])
+  @@index([teamId])
+  @@index([userId])
+}
+
+enum TeamRole {
+  ADMIN
+  MEMBER
+}
+
+// ============ Project Management ============
+
+model Project {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  status      ProjectStatus @default(ACTIVE)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  creatorId   String
+  creator     User     @relation("ProjectCreator", fields: [creatorId], references: [id], onDelete: Cascade)
+
+  teamId      String
+  team        Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  // Relations
+  members     ProjectMember[]
+  files       File[]
+  activities  ActivityLog[]
+
+  @@index([teamId])
+  @@index([creatorId])
+}
+
+model ProjectMember {
+  id        String        @id @default(cuid())
+  projectId String
+  userId    String
+  role      ProjectRole   @default(VIEWER)
+  joinedAt  DateTime      @default(now())
+
+  project   Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, userId])
+  @@index([projectId])
+  @@index([userId])
+}
+
+enum ProjectRole {
+  ADMIN
+  EDITOR
+  VIEWER
+}
+
+enum ProjectStatus {
+  ACTIVE
+  ARCHIVED
+  COMPLETED
+}
+
+// ============ File Management ============
+
+model File {
+  id          String       @id @default(cuid())
+  name        String
+  content     String       @db.Text
+  fileType    FileTypeEnum
+  status      FileStatus   @default(DRAFT)
+
+  // Auto-naming fields
+  projectName String?
+  templateType String?
+
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  lastAutoSave DateTime?
+
+  creatorId   String
+  creator     User         @relation("FileCreator", fields: [creatorId], references: [id], onDelete: Cascade)
+
+  projectId   String
+  project     Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  // Liveblocks storage ID
+  storageId   String       @unique
+
+  // Relations
+  versions    FileVersion[]
+  comments    Comment[]
+  activities  ActivityLog[]
+
+  @@index([projectId])
+  @@index([creatorId])
+  @@index([fileType])
+  @@index([status])
+  @@index([createdAt])
+}
+
+enum FileTypeEnum {
+  PROBLEM_DEFINITION
+  SOLUTION_DESIGN
+  EXECUTION_TRACKING
+  RETROSPECTIVE_SUMMARY
+  CUSTOM
+}
+
+enum FileStatus {
+  DRAFT
+  IN_PROGRESS
+  REVIEW
+  COMPLETED
+}
+
+// ============ Version History ============
+
+model FileVersion {
+  id          String   @id @default(cuid())
+  fileId      String
+  versionNumber Int
+  content     String   @db.Text
+  changeLog   String?  @db.Text
+  createdAt   DateTime @default(now())
+
+  file        File     @relation(fields: [fileId], references: [id], onDelete: Cascade)
+
+  creatorId   String
+  creator     User     @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+
+  @@unique([fileId, versionNumber])
+  @@index([fileId])
+  @@index([createdAt])
+}
+
+// ============ Comments & Mentions ============
+
+model Comment {
+  id          String   @id @default(cuid())
+  fileId      String
+  content     String   @db.Text
+
+  // For inline comments (optional position)
+  lineStart   Int?
+  lineEnd     Int?
+
+  isResolved  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  authorId    String
+  author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  file        File     @relation(fields: [fileId], references: [id], onDelete: Cascade)
+
+  // Relations
+  mentions    Mention[]
+
+  @@index([fileId])
+  @@index([authorId])
+  @@index([createdAt])
+}
+
+model Mention {
+  id        String   @id @default(cuid())
+  commentId String
+  userId    String
+  isRead    Boolean  @default(false)
+  readAt    DateTime?
+
+  comment   Comment  @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([commentId, userId])
+  @@index([userId])
+  @@index([isRead])
+}
+
+// ============ Notifications ============
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  type      NotificationType
+  title     String
+  content   String           @db.Text
+  link      String?
+  isRead    Boolean          @default(false)
+  createdAt DateTime         @default(now())
+
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([isRead])
+  @@index([createdAt])
+}
+
+enum NotificationType {
+  MENTION
+  COMMENT_REPLY
+  FILE_CHANGED
+  TASK_DEADLINE
+  PROJECT_UPDATED
+  TEAM_INVITATION
+}
+
+// ============ Activity Logs ============
+
+model ActivityLog {
+  id          String       @id @default(cuid())
+  projectId   String?
+  fileId      String?
+  userId      String
+  action      ActionType
+  metadata    Json?
+  createdAt   DateTime     @default(now())
+
+  project     Project?     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  file        File?        @relation(fields: [fileId], references: [id], onDelete: Cascade)
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
+  @@index([fileId])
+  @@index([userId])
+  @@index([createdAt])
+}
+
+enum ActionType {
+  FILE_CREATED
+  FILE_UPDATED
+  FILE_DELETED
+  FILE_RESTORED
+  COMMENT_ADDED
+  COMMENT_RESOLVED
+  MEMBER_ADDED
+  MEMBER_REMOVED
+  PROJECT_CREATED
+  PROJECT_ARCHIVED
+}
+
+// ============ Templates ============
+
+model Template {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  category    TemplateCategory
+  content     String   @db.Text
+  isBuiltIn   Boolean  @default(false)
+  isPublic    Boolean  @default(true)
+
+  // AI prompt for template
+  aiPrompt    String?  @db.Text
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Optional: creator of custom template
+  creatorId   String?
+  creator     User?    @relation("TemplateCreator", fields: [creatorId], references: [id], onDelete: SetNull)
+
+  @@index([category])
+  @@index([isBuiltIn])
+}
+
+enum TemplateCategory {
+  PROBLEM_DEFINITION
+  SOLUTION_DESIGN
+  EXECUTION_TRACKING
+  RETROSPECTIVE_SUMMARY
+  CUSTOM
+}
