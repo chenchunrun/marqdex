@@ -144,12 +144,13 @@ export default async function FilesPage() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                          file._count.versions > 0
-                            ? 'bg-blue-100 text-blue-800'
-                            : 'bg-gray-100 text-gray-600'
+                          'bg-blue-100 text-blue-800'
                         }`}>
-                          {file._count.versions} version{file._count.versions !== 1 ? 's' : ''}
+                          {file._count.versions + 1} version{file._count.versions + 1 !== 1 ? 's' : ''}
                         </span>
+                        <div className="text-xs text-gray-400 mt-1">
+                          Current + {file._count.versions} snapshot{file._count.versions !== 1 ? 's' : ''}
+                        </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         <span className={`px-2 py-1 text-xs font-medium rounded-full ${
