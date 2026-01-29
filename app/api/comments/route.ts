@@ -48,7 +48,7 @@ export async function POST(req: Request) {
             { email: { equals: name } }
           ]
         })),
-        memberships: {
+        projectMemberships: {
           some: {
             projectId: file.projectId
           }
@@ -88,12 +88,10 @@ export async function POST(req: Request) {
       await db.notification.create({
         data: {
           userId: mentionedUser.id,
-          type: 'COMMENT_MENTION',
-          commentId: comment.id,
-          fileId: validated.fileId,
-          projectId: file.projectId,
-          message: `${session.user.name || session.user.email} mentioned you in a comment`,
-          read: false
+          type: 'MENTION',
+          title: '💬 New Mention',
+          content: `${session.user.name || session.user.email} mentioned you in a comment`,
+          link: `/editor/${validated.fileId}`
         }
       })
     }

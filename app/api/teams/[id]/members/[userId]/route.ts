@@ -70,7 +70,7 @@ export async function PATCH(
     }
 
     // Update member role
-    const updatedMembership = await db.teamMembership.update({
+    const updatedMembership = await db.teamMember.update({
       where: {
         teamId_userId: {
           teamId,
@@ -159,7 +159,7 @@ export async function DELETE(
     }
 
     // Remove member
-    await db.teamMembership.delete({
+    await db.teamMember.delete({
       where: {
         teamId_userId: {
           teamId,

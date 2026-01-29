@@ -70,7 +70,7 @@ export async function PATCH(
     }
 
     // Update member role
-    const updatedMembership = await db.projectMembership.update({
+    const updatedMembership = await db.projectMember.update({
       where: {
         projectId_userId: {
           projectId,
@@ -165,7 +165,7 @@ export async function DELETE(
     })
 
     // Remove member
-    await db.projectMembership.delete({
+    await db.projectMember.delete({
       where: {
         projectId_userId: {
           projectId,
@@ -180,7 +180,7 @@ export async function DELETE(
         projectId,
         userId: session.user.id,
         action: "MEMBER_REMOVED",
-        details: `Removed ${user?.name || user?.email} from the project`
+        metadata: { removedUser: user?.name || user?.email }
       }
     })
 

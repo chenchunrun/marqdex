@@ -91,14 +91,14 @@ export function FileImporter({ userId, projects }: FileImporterProps) {
         reader.readAsText(file)
       } else if (fileExtension === '.docx') {
         // For .docx files, use conversion API
-        const formData = new FormData()
-        formData.append('file', file)
-        formData.append('format', 'markdown')
-        formData.append('useAI', conversionMode)
+        const uploadFormData = new FormData()
+        uploadFormData.append('file', file)
+        uploadFormData.append('format', 'markdown')
+        uploadFormData.append('useAI', conversionMode)
 
         const response = await fetch('/api/convert', {
           method: 'POST',
-          body: formData
+          body: uploadFormData
         })
 
         if (!response.ok) {

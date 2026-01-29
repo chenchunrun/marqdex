@@ -117,29 +117,29 @@ export function TemplateCard({ template }: { template: Template }) {
     <>
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
         <div className="flex items-start justify-between mb-4">
-          <div className="flex-1">
+          <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-2">
               <span className="text-2xl">{categoryIcons[template.category]}</span>
-              <h3 className="text-lg font-semibold text-gray-900">{template.name}</h3>
+              <h3 className="text-lg font-semibold text-gray-900 break-words">{template.name}</h3>
             </div>
             <span className="inline-block px-2 py-1 text-xs font-medium rounded bg-blue-100 text-blue-800">
               {categoryLabels[template.category]}
             </span>
           </div>
           {template.isBuiltIn && (
-            <span className="px-2 py-1 text-xs font-medium rounded bg-green-100 text-green-800">
+            <span className="px-2 py-1 text-xs font-medium rounded bg-green-100 text-green-800 flex-shrink-0">
               Built-in
             </span>
           )}
         </div>
 
         {template.description && (
-          <p className="text-sm text-gray-600 mb-4 line-clamp-2">{template.description}</p>
+          <p className="text-sm text-gray-600 mb-4 line-clamp-2 break-words">{template.description}</p>
         )}
 
         {template.creator && (
-          <p className="text-xs text-gray-500 mb-4">
-            Created by {template.creator.name || template.creator.email}
+          <p className="text-xs text-gray-500 mb-4 break-words">
+            Created by <span className="break-all">{template.creator.name || template.creator.email}</span>
           </p>
         )}
 
@@ -169,8 +169,8 @@ export function TemplateCard({ template }: { template: Template }) {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
             <div className="p-6 border-b border-gray-200">
-              <h2 className="text-xl font-semibold text-gray-900">Select Project</h2>
-              <p className="text-sm text-gray-500 mt-1">
+              <h2 className="text-xl font-semibold text-gray-900 break-words">Select Project</h2>
+              <p className="text-sm text-gray-500 mt-1 break-words">
                 Choose a project to create a file from this template
               </p>
             </div>
@@ -189,7 +189,7 @@ export function TemplateCard({ template }: { template: Template }) {
                 <select
                   value={selectedProject}
                   onChange={(e) => setSelectedProject(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 break-all"
                 >
                   {projects.map((project) => (
                     <option key={project.id} value={project.id}>

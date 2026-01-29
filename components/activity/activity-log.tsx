@@ -156,24 +156,24 @@ export function ActivityLog({ projectId, fileId, limit = 20 }: ActivityLogProps)
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="text-sm font-medium text-gray-900">
+                  <span className="text-sm font-medium text-gray-900 truncate">
                     {activity.user.name || activity.user.email}
                   </span>
-                  <span className="text-gray-300">•</span>
-                  <span className="text-xs text-gray-500">
+                  <span className="text-gray-300 flex-shrink-0">•</span>
+                  <span className="text-xs text-gray-500 flex-shrink-0">
                     {formatTime(activity.createdAt)}
                   </span>
                 </div>
-                <div className="text-sm text-gray-700">
+                <div className="text-sm text-gray-700 break-words">
                   {getActionLabel(activity.action)}
                   {activity.file && (
-                    <span className="ml-1 text-blue-600 hover:text-blue-700 cursor-pointer">
+                    <span className="ml-1 text-blue-600 hover:text-blue-700 cursor-pointer break-all">
                       "{activity.file.name}"
                     </span>
                   )}
                 </div>
                 {activity.details && (
-                  <p className="text-xs text-gray-500 mt-1">{activity.details}</p>
+                  <p className="text-xs text-gray-500 mt-1 break-words">{activity.details}</p>
                 )}
               </div>
             </div>

@@ -22,37 +22,6 @@ export async function GET(req: Request) {
         userId: session.user.id,
         ...(unreadOnly && { isRead: false })
       },
-      include: {
-        comment: {
-          include: {
-            author: {
-              select: {
-                id: true,
-                name: true,
-                email: true
-              }
-            },
-            file: {
-              select: {
-                id: true,
-                name: true
-              }
-            }
-          }
-        },
-        file: {
-          select: {
-            id: true,
-            name: true
-          }
-        },
-        project: {
-          select: {
-            id: true,
-            name: true
-          }
-        }
-      },
       orderBy: { createdAt: 'desc' },
       take: limit
     })

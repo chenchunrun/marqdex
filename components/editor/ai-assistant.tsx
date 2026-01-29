@@ -242,15 +242,15 @@ export function AIAssistant({ fileId, projectId, fileName, projectName, currentC
                 <div className="flex flex-col h-full">
                   {/* Action Title and File Name Input */}
                   <div className="px-6 py-3 bg-purple-50 border-b border-purple-200">
-                    <div className="flex items-center justify-between">
-                      <h3 className="font-semibold text-purple-900">{getActionTitle()}</h3>
-                      <div className="flex items-center gap-2">
-                        <label className="text-sm text-purple-700">New file name:</label>
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                      <h3 className="font-semibold text-purple-900 break-words">{getActionTitle()}</h3>
+                      <div className="flex items-center gap-2 min-w-0 flex-1 sm:flex-none">
+                        <label className="text-sm text-purple-700 whitespace-nowrap">New file name:</label>
                         <input
                           type="text"
                           value={newFileName}
                           onChange={(e) => setNewFileName(e.target.value)}
-                          className="px-3 py-1 text-sm border border-purple-300 rounded focus:outline-none focus:ring-2 focus:ring-purple-500 min-w-[300px]"
+                          className="px-3 py-1 text-sm border border-purple-300 rounded focus:outline-none focus:ring-2 focus:ring-purple-500 w-full sm:w-auto min-w-[200px]"
                           placeholder="new-file-name.md"
                         />
                       </div>
@@ -260,9 +260,9 @@ export function AIAssistant({ fileId, projectId, fileName, projectName, currentC
                   {/* Comparison View */}
                   <div className="flex flex-col md:flex-row h-[600px]">
                     {/* Original Content */}
-                    <div className="flex-1 border-r border-gray-200 flex flex-col">
+                    <div className="flex-1 border-r border-gray-200 flex flex-col min-w-0">
                       <div className="px-4 py-2 bg-gray-100 border-b border-gray-200">
-                        <span className="text-sm font-semibold text-gray-700">📄 Original Content</span>
+                        <span className="text-sm font-semibold text-gray-700 break-words">📄 Original Content</span>
                       </div>
                       <div className="flex-1 p-4 overflow-auto">
                         <div className="bg-white border border-gray-200 rounded-lg p-4 min-h-full prose prose-sm max-w-none">
@@ -277,9 +277,9 @@ export function AIAssistant({ fileId, projectId, fileName, projectName, currentC
                     </div>
 
                     {/* AI Generated Content */}
-                    <div className="flex-1 flex flex-col">
+                    <div className="flex-1 flex flex-col min-w-0">
                       <div className="px-4 py-2 bg-blue-100 border-b border-blue-200">
-                        <span className="text-sm font-semibold text-blue-700">🤖 AI Generated (Editable)</span>
+                        <span className="text-sm font-semibold text-blue-700 break-words">🤖 AI Generated (Editable)</span>
                       </div>
                       <div className="flex-1 p-4 overflow-auto">
                         <textarea

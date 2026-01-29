@@ -120,7 +120,7 @@ export async function POST(
     }
 
     // Add member to team
-    const membership = await db.teamMembership.create({
+    const membership = await db.teamMember.create({
       data: {
         teamId,
         userId,

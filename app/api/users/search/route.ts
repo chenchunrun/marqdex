@@ -63,7 +63,7 @@ export async function GET(req: Request) {
           { name: { contains: query, mode: 'insensitive' } },
           { email: { contains: query, mode: 'insensitive' } }
         ],
-        memberships: {
+        projectMemberships: {
           some: {
             projectId: projectIdToUse
           }

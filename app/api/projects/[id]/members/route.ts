@@ -120,7 +120,7 @@ export async function POST(
     }
 
     // Add member to project
-    const membership = await db.projectMembership.create({
+    const membership = await db.projectMember.create({
       data: {
         projectId,
         userId,
@@ -144,7 +144,7 @@ export async function POST(
         projectId,
         userId: session.user.id,
         action: "MEMBER_ADDED",
-        details: `Added ${membership.user.name || membership.user.email} to the project`
+        metadata: { addedUser: membership.user.name || membership.user.email }
       }
     })
 

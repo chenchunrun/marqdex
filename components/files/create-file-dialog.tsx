@@ -82,8 +82,8 @@ export function CreateFileDialog({ projectId, projectName }: CreateFileDialogPro
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
         <div className="p-6 border-b border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-900">Create New File</h2>
-          <p className="text-sm text-gray-500 mt-1">
+          <h2 className="text-xl font-semibold text-gray-900 break-words">Create New File</h2>
+          <p className="text-sm text-gray-500 mt-1 break-words">
             {projectName && `Project: ${projectName}`}
           </p>
         </div>
@@ -127,7 +127,7 @@ export function CreateFileDialog({ projectId, projectName }: CreateFileDialogPro
                   }`}
                 >
                   <div className="text-2xl mb-2">{categoryIcons[template.category] || "📄"}</div>
-                  <div className="font-medium text-gray-900">{template.name}</div>
+                  <div className="font-medium text-gray-900 break-words">{template.name}</div>
                   <div className="text-xs text-gray-500">{template.category.replace(/_/g, ' ')}</div>
                 </button>
               ))}
